@@ -1,54 +1,63 @@
 # DeliverEats – Multi-Restaurant Delivery Platform
 
-DeliverEats is a comprehensive, multi-tenant food delivery ecosystem built with Laravel 11, Livewire 3, Alpine.js, and Tailwind CSS. It connects customers, restaurants, delivery riders, and administrators in a single, unified platform with real-time tracking and automated dispatching.
+DeliverEats is a robust, multi-tenant food delivery ecosystem built with Laravel 11, Livewire 3, Alpine.js, and Tailwind CSS. It connects customers, restaurants, delivery riders, and administrators in a single, unified platform with real-time tracking and automated dispatching.
 
-## 🏗️ Core Architecture & Logic
+---
 
-This project moves beyond standard CRUD operations by implementing several advanced architectural patterns and business logic engines:
+## 🏗️ Deep Dive into System Logic & Architecture
 
-### 1. Robust State Machine (Order Lifecycle)
-Orders do not simply update a "status" string. They are governed by a strict `OrderStateMachine` that enforces valid transitions and logs all state changes for auditing.
-* **Flow:** `placed` → `confirmed` → `preparing` → `on_the_way` → `delivered`.
-* **Cancellations:** Orders can be gracefully cancelled by admins or restaurants at any active stage via the state machine override logic.
-* **Event-Driven:** Transitions trigger Laravel Events (e.g., `OrderStatusUpdated`), ensuring side-effects like notifications or dispatching are loosely coupled.
+This project strictly adheres to solid OOP principles and advanced architectural patterns. Standard CRUD operations are abstracted, with heavy emphasis placed on background processing, state management, and algorithmic pricing.
 
-### 2. Automated Dispatch Algorithm
-When an order transitions to `confirmed`, the state machine triggers a `DispatchOrderJob` pushed to the background Queue.
-* The algorithm queries the database for all `is_online` Riders.
-* It calculates the exact straight-line distance from the restaurant to each online rider using the Haversine formula (or Google Maps Distance Matrix API).
-* The order is automatically assigned to the optimal rider to ensure fast delivery times.
-* *Note: Restaurants also have the capability to manually override and assign riders via their dashboard.*
+### 1. Order State Machine (State Pattern)
+Orders are governed by the `App\StateMachines\OrderStateMachine` class, preventing invalid data states and race conditions.
+* **Validation Matrix:** Uses a `VALID_TRANSITIONS` constant array mapping authorized state jumps (e.g., `placed` → `confirmed`). Attempting an invalid jump throws a custom `InvalidOrderTransitionException`.
+* **ACID Transactions:** Every state transition (`transitionTo()`) is wrapped in a `DB::transaction()`. If the order fails to save, or the log fails to create, the entire transition rolls back.
+* **Audit Trail:** Every successful jump creates an `OrderStateLog` record, tracking the exact timestamp, `actor_type` (Admin, Restaurant, System), and `actor_id`.
+* **Event-Driven Side Effects:** Transitions fire an `OrderStatusUpdated` Laravel Event. Listeners decouple the core order flow from external actions, such as triggering the background dispatch job when moving to `confirmed`.
 
-### 3. Dynamic Surge Pricing Engine
-The platform dynamically calculates delivery fees using the Strategy Pattern (`SurgePricingStrategy`).
-* **Multipliers:** Evaluates current demand (active orders vs. active riders), time of day (rush hour), and simulated weather conditions.
-* **Logging:** When surge pricing is active, it logs the multiplier and reasoning in the `surge_pricing_logs` table for administrative review.
+### 2. Automated Rider Dispatch Algorithm (Queue & Geo-Spatial Logic)
+When an order is confirmed, the system pushes a `DispatchOrderJob` (implementing `ShouldQueue`) to the background Redis worker queue to avoid blocking the HTTP request.
+* **Geo-Spatial Querying:** The algorithm queries the `riders` table for instances where `is_online = true`.
+* **Haversine Formula Application:** It extracts the `$restaurant->lat` and `$restaurant->lng` and calculates the spherical distance between the restaurant and every online rider's `current_lat` and `current_lng`. 
+* **Algorithmic Sorting:** Riders are sorted in a `Collection` by calculated distance (or via the Google Maps Distance Matrix API service). The system automatically assigns the closest optimal rider, updating `$order->rider_id`.
 
-### 4. Payout Split Engine (Stripe Connect Simulation)
-When an order is completed, the `PayoutCalculatorService` determines how the revenue is distributed.
-* **Logic:** The total order amount is split based on commission rates. A percentage goes to the Restaurant, a fixed/distance-based fee goes to the Rider, and the platform retains the remainder.
-* **Financial Ledger:** These splits are stored in the `payout_splits` table. The Admin Control Tower can then review and "Mark as Paid", which triggers a simulated Stripe Connect payout transfer to the respective user bank accounts.
+### 3. Dynamic Surge Pricing Engine (Strategy Pattern)
+The delivery fee calculation utilizes a strict Strategy behavioral design pattern via the `App\Services\SurgePricingService`.
+* **Interface Contract:** All pricing algorithms implement the `SurgePricingStrategy` interface, requiring a `calculate(float $baseFee): float` method.
+* **Dynamic Resolution:** The service resolves active strategies such as:
+  * `TimeBasedSurgeStrategy`: Applies a 1.5x multiplier during configured rush hours.
+  * `MultiplierSurgeStrategy`: Evaluates current supply/demand (active orders vs active riders) to calculate an algorithmic multiplier.
+  * `FlatSurgeStrategy`: Adds fixed hazard pay (e.g., bad weather).
+* **Financial Ledgering:** The final calculated multiplier and the exact reasoning are durably recorded in the `surge_pricing_logs` table before the user is charged.
 
-### 5. Polymorphic Review System
-Customers can leave reviews at the end of their order. To keep the database clean, the `reviews` table utilizes Laravel's Polymorphic Relationships (`reviewable_type`, `reviewable_id`).
-* This single table securely stores ratings and comments for **both** Restaurants and Riders independently.
+### 4. Financial Splitting & Stripe Connect Simulation
+Processing a single customer payment requires routing funds to three separate entities (Restaurant, Rider, Platform).
+* **Payout Split Engine:** When an order is completed, the `PayoutCalculatorService` executes business logic rules (e.g., Platform retains a 20% commission on subtotal and 10% on delivery fee). The exact dollar amounts are stored in a `PayoutSplit` model.
+* **Stripe Facade:** The Admin Control Tower triggers a payout run. The platform utilizes a mock `StripePaymentService` class that acts as a facade, accepting the `PayoutSplit` model and simulating the secure API payload required to execute multi-party transfers via Stripe Connect.
 
-### 6. "Real-Time" Dashboard Polling
-To provide a live experience without the overhead of maintaining a WebSocket server (like Pusher) in a university/demo environment, the application leverages **Livewire Polling**.
-* **Live Map Tracking:** The customer tracking page polls the server to fetch the actual Rider's `current_lat` and `current_lng` from the database, updating their Leaflet map markers in real-time.
-* **Dashboard Feeds:** Restaurant and Rider dashboards automatically refresh to display new incoming orders and state changes instantly.
+### 5. Polymorphic Rating & Review System
+To maintain database normalization, the `reviews` table utilizes Laravel's Polymorphic Relationships.
+* Instead of separate `restaurant_reviews` and `rider_reviews` tables, the schema uses `reviewable_type` and `reviewable_id`.
+* When a customer completes an order, they submit two distinct ratings. The controller dynamically resolves the `Restaurant::class` and `Rider::class` models, saving them securely to the single polymorphic table.
 
-## 👥 Role-Based Access & Dashboards
+### 6. Real-Time Telemetry via XHR Polling
+To provide a live experience without the overhead of maintaining a WebSocket server (like Pusher) in a university/demo environment, the application leverages Livewire 3's `wire:poll` directive.
+* **Asynchronous Feeds:** High-level dashboard containers send non-blocking XHR requests every 5000ms.
+* **DOM Diffing:** Livewire calculates the state differences. If an order transitions to `preparing`, the Restaurant and Rider dashboards update instantly without a hard page reload.
+* **Live Map Telemetry:** The customer tracking page fetches the latest `$rider->current_lat` and `$rider->current_lng`. A custom browser event dispatcher injects these new coordinates into the frontend Leaflet.js instance, smoothly moving the marker across the map in real-time.
 
-The platform uses a unified `users` table with a `role` column, managed via custom Middleware (`RedirectByRole` and `CheckRole`).
+---
 
-1. **Customers:** Browse restaurants, add items to a dynamic cart, place orders, and track them on a live map.
-2. **Restaurants:** Manage menu categories, items, variants, and availability. Monitor incoming orders and transition their states (e.g., "Start Preparing").
-3. **Riders:** Toggle online/offline status. View active deliveries assigned to them, and mark orders as "Picked Up" or "Delivered".
-4. **Admins (Control Tower):** View high-level metrics, manage surge pricing, process financial payouts, and monitor the entire city via a Live Leaflet Map showing all online riders, active orders, and restaurants.
+## 👥 Role-Based Access Control (RBAC)
+
+The platform relies on a unified `users` table with a string `role` identifier, protected by custom Middleware (`RedirectByRole` and `CheckRole`).
+
+1. **Customers:** Browse dynamic cart sessions, place orders, and track them via Live Maps.
+2. **Restaurants:** Manage polymorphic `MenuItems` and `MenuCategories`. Transition active orders via the state machine override.
+3. **Riders:** Stream telemetry data (`current_lat`/`lng`), toggle availability, and execute order pickups.
+4. **Admins:** Oversee the entire city via the Control Tower Leaflet Map, analyze `SurgePricingLogs`, and trigger `PayoutSplits`.
 
 ## 🚀 Deployment (Render)
-
-This project includes a custom `Dockerfile` and `build.sh` script optimized for deployment on Render.
-* **Requirements:** PHP 8.2+, SQLite/PostgreSQL, Node.js (for Vite asset compilation).
-* **Queues:** The application defaults to the `sync` queue driver for ease of deployment, but is fully configured to use `redis` via the Predis client for high-performance background processing.
+Includes a custom `Dockerfile` and `build.sh` script optimized for Render.
+* **Requirements:** PHP 8.2+, SQLite/PostgreSQL, Node.js (for Vite).
+* **Queues:** Defaults to the `sync` queue driver, but is production-ready for `redis` via the Predis client for actual background job processing.
