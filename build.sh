@@ -16,4 +16,4 @@ php artisan optimize:clear
 php artisan migrate --force
 
 # Seed the database if it is empty (optional, useful for demo)
-# php artisan db:seed --force
+php artisan db:seed --force
