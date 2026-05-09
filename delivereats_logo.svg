@@ -1,0 +1,51 @@
+<svg width="100%" viewBox="0 0 680 340" role="img" xmlns="http://www.w3.org/2000/svg" style="">
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">DeliverEats Logo</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">DeliverEats food delivery platform logo with a stylized speed-motion fork and flame icon</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- Background pill container -->
+  <rect x="140" y="60" width="400" height="220" rx="28" fill="#1A1A1A" style="fill:rgb(26, 26, 26);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Speed motion lines (left) -->
+  <rect x="162" y="128" width="36" height="5" rx="2.5" fill="#FF6B2B" opacity="0.5" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="162" y="142" width="24" height="5" rx="2.5" fill="#FF6B2B" opacity="0.3" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.3;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="162" y="156" width="30" height="5" rx="2.5" fill="#FF6B2B" opacity="0.4" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="162" y="170" width="20" height="5" rx="2.5" fill="#FF6B2B" opacity="0.25" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.25;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="162" y="184" width="28" height="5" rx="2.5" fill="#FF6B2B" opacity="0.35" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.35;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Icon: Stylized fork with flame -->
+  <!-- Fork body -->
+  <rect x="218" y="100" width="8" height="56" rx="4" fill="#FF6B2B" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Fork tine left -->
+  <rect x="210" y="88" width="6" height="30" rx="3" fill="#FF6B2B" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Fork tine right -->
+  <rect x="226" y="88" width="6" height="30" rx="3" fill="#FF6B2B" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Fork tine middle -->
+  <rect x="218" y="88" width="6" height="30" rx="3" fill="#FF6B2B" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Fork neck connector -->
+  <rect x="210" y="115" width="28" height="6" rx="3" fill="#FF6B2B" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Flame shape above fork -->
+  <path d="M222 84 C222 84 214 76 216 64 C216 64 218 70 221 68 C221 68 218 58 224 50 C224 50 222 62 228 64 C228 64 232 56 230 64 C232 62 236 58 234 70 C234 70 232 78 228 84 Z" fill="#FFC542" opacity="0.95" style="fill:rgb(255, 197, 66);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.95;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <path d="M222 82 C222 82 217 76 219 67 C220 70 222 68 223 65 C223 70 226 73 225 80 Z" fill="#FF6B2B" opacity="0.7" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Wordmark: Deliver -->
+  <text x="258" y="150" font-family="var(--font-sans)" font-size="38" font-weight="500" fill="#FFFFFF" letter-spacing="-1" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Anthropic Sans, sans-serif;font-size:38px;font-weight:500;text-anchor:start;dominant-baseline:auto">Deliver</text>
+  <!-- Wordmark: Eats (in orange) -->
+  <text x="258" y="192" font-family="var(--font-sans)" font-size="38" font-weight="500" fill="#FF6B2B" letter-spacing="-1" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Anthropic Sans, sans-serif;font-size:38px;font-weight:500;text-anchor:start;dominant-baseline:auto">Eats</text>
+
+  <!-- Tagline -->
+  <text x="258" y="215" font-family="var(--font-sans)" font-size="12" font-weight="400" fill="#888" letter-spacing="2" style="fill:rgb(136, 136, 136);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Anthropic Sans, sans-serif;font-size:12px;font-weight:400;text-anchor:start;dominant-baseline:auto">FOOD. FAST. EVERYWHERE.</text>
+
+  <!-- Dot accent on the 'i' -->
+  <circle cx="274" cy="112" r="4" fill="#FF6B2B" style="fill:rgb(255, 107, 43);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Small GPS pin icon top-right of icon area -->
+  <circle cx="248" cy="95" r="6" fill="none" stroke="#FFC542" stroke-width="1.5" opacity="0.7" style="fill:none;stroke:rgb(255, 197, 66);color:rgb(251, 251, 254);stroke-width:1.5px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <circle cx="248" cy="95" r="2.5" fill="#FFC542" opacity="0.7" style="fill:rgb(255, 197, 66);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <line x1="248" y1="101" x2="248" y2="108" stroke="#FFC542" stroke-width="1.5" stroke-linecap="round" opacity="0.7" style="fill:rgb(0, 0, 0);stroke:rgb(255, 197, 66);color:rgb(251, 251, 254);stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+</svg>
