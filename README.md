@@ -1,59 +1,54 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DeliverEats – Multi-Restaurant Delivery Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+DeliverEats is a comprehensive, multi-tenant food delivery ecosystem built with Laravel 11, Livewire 3, Alpine.js, and Tailwind CSS. It connects customers, restaurants, delivery riders, and administrators in a single, unified platform with real-time tracking and automated dispatching.
 
-## About Laravel
+## 🏗️ Core Architecture & Logic
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This project moves beyond standard CRUD operations by implementing several advanced architectural patterns and business logic engines:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 1. Robust State Machine (Order Lifecycle)
+Orders do not simply update a "status" string. They are governed by a strict `OrderStateMachine` that enforces valid transitions and logs all state changes for auditing.
+* **Flow:** `placed` → `confirmed` → `preparing` → `on_the_way` → `delivered`.
+* **Cancellations:** Orders can be gracefully cancelled by admins or restaurants at any active stage via the state machine override logic.
+* **Event-Driven:** Transitions trigger Laravel Events (e.g., `OrderStatusUpdated`), ensuring side-effects like notifications or dispatching are loosely coupled.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Automated Dispatch Algorithm
+When an order transitions to `confirmed`, the state machine triggers a `DispatchOrderJob` pushed to the background Queue.
+* The algorithm queries the database for all `is_online` Riders.
+* It calculates the exact straight-line distance from the restaurant to each online rider using the Haversine formula (or Google Maps Distance Matrix API).
+* The order is automatically assigned to the optimal rider to ensure fast delivery times.
+* *Note: Restaurants also have the capability to manually override and assign riders via their dashboard.*
 
-## Learning Laravel
+### 3. Dynamic Surge Pricing Engine
+The platform dynamically calculates delivery fees using the Strategy Pattern (`SurgePricingStrategy`).
+* **Multipliers:** Evaluates current demand (active orders vs. active riders), time of day (rush hour), and simulated weather conditions.
+* **Logging:** When surge pricing is active, it logs the multiplier and reasoning in the `surge_pricing_logs` table for administrative review.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 4. Payout Split Engine (Stripe Connect Simulation)
+When an order is completed, the `PayoutCalculatorService` determines how the revenue is distributed.
+* **Logic:** The total order amount is split based on commission rates. A percentage goes to the Restaurant, a fixed/distance-based fee goes to the Rider, and the platform retains the remainder.
+* **Financial Ledger:** These splits are stored in the `payout_splits` table. The Admin Control Tower can then review and "Mark as Paid", which triggers a simulated Stripe Connect payout transfer to the respective user bank accounts.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 5. Polymorphic Review System
+Customers can leave reviews at the end of their order. To keep the database clean, the `reviews` table utilizes Laravel's Polymorphic Relationships (`reviewable_type`, `reviewable_id`).
+* This single table securely stores ratings and comments for **both** Restaurants and Riders independently.
 
-## Laravel Sponsors
+### 6. "Real-Time" Dashboard Polling
+To provide a live experience without the overhead of maintaining a WebSocket server (like Pusher) in a university/demo environment, the application leverages **Livewire Polling**.
+* **Live Map Tracking:** The customer tracking page polls the server to fetch the actual Rider's `current_lat` and `current_lng` from the database, updating their Leaflet map markers in real-time.
+* **Dashboard Feeds:** Restaurant and Rider dashboards automatically refresh to display new incoming orders and state changes instantly.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 👥 Role-Based Access & Dashboards
 
-### Premium Partners
+The platform uses a unified `users` table with a `role` column, managed via custom Middleware (`RedirectByRole` and `CheckRole`).
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Customers:** Browse restaurants, add items to a dynamic cart, place orders, and track them on a live map.
+2. **Restaurants:** Manage menu categories, items, variants, and availability. Monitor incoming orders and transition their states (e.g., "Start Preparing").
+3. **Riders:** Toggle online/offline status. View active deliveries assigned to them, and mark orders as "Picked Up" or "Delivered".
+4. **Admins (Control Tower):** View high-level metrics, manage surge pricing, process financial payouts, and monitor the entire city via a Live Leaflet Map showing all online riders, active orders, and restaurants.
 
-## Contributing
+## 🚀 Deployment (Render)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project includes a custom `Dockerfile` and `build.sh` script optimized for deployment on Render.
+* **Requirements:** PHP 8.2+, SQLite/PostgreSQL, Node.js (for Vite asset compilation).
+* **Queues:** The application defaults to the `sync` queue driver for ease of deployment, but is fully configured to use `redis` via the Predis client for high-performance background processing.
